@@ -1,0 +1,197 @@
+<svg width="100%" viewBox="0 0 680 920" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>EternalTeleSales PySpark Pipeline Architecture</title>
+  <desc>Architecture diagram showing three input CSVs flowing through data quality checks and six transformations to produce six output CSVs.</desc>
+
+  <style>
+    text { font-family: ui-sans-serif, system-ui, sans-serif; fill: #3d3d3a; }
+    .th  { font-size: 13px; font-weight: 600; fill: #3d3d3a; }
+    .ts  { font-size: 11px; font-weight: 400; fill: #73726c; }
+    .box-teal   { fill: #e1f5ee; stroke: #0f6e56; }
+    .box-amber  { fill: #faeeda; stroke: #854f0b; }
+    .box-purple { fill: #eeedfe; stroke: #534ab7; }
+    .box-coral  { fill: #faece7; stroke: #993c1d; }
+    .box-gray   { fill: #f1efe8; stroke: #5f5e5a; }
+    .text-teal   { fill: #085041; }
+    .text-amber  { fill: #633806; }
+    .text-purple { fill: #26215c; }
+    .text-coral  { fill: #4a1b0c; }
+    .text-gray   { fill: #2c2c2a; }
+    .sub-teal   { fill: #0f6e56; }
+    .sub-amber  { fill: #854f0b; }
+    .sub-purple { fill: #534ab7; }
+    .sub-coral  { fill: #993c1d; }
+    .sub-gray   { fill: #5f5e5a; }
+    .divider    { stroke: #b4b2a9; stroke-width: 0.5; }
+    .arr        { stroke: #888780; stroke-width: 1; fill: none; }
+    .dashed     { stroke: #b4b2a9; stroke-width: 0.5; stroke-dasharray: 4 3; fill: none; }
+    .log-border { fill: none; stroke: #b4b2a9; stroke-width: 0.5; stroke-dasharray: 5 3; }
+  </style>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- Layer labels -->
+  <text class="ts" x="36" y="108" text-anchor="middle" transform="rotate(-90,36,108)">Input</text>
+  <text class="ts" x="36" y="258" text-anchor="middle" transform="rotate(-90,36,258)">Quality</text>
+  <text class="ts" x="36" y="450" text-anchor="middle" transform="rotate(-90,36,450)">Transform</text>
+  <text class="ts" x="36" y="668" text-anchor="middle" transform="rotate(-90,36,668)">Output</text>
+  <text class="ts" x="36" y="828" text-anchor="middle" transform="rotate(-90,36,828)">Infra</text>
+
+  <!-- Dividers -->
+  <line class="divider" x1="52" y1="155" x2="645" y2="155"/>
+  <line class="divider" x1="52" y1="315" x2="645" y2="315"/>
+  <line class="divider" x1="52" y1="555" x2="645" y2="555"/>
+  <line class="divider" x1="52" y1="755" x2="645" y2="755"/>
+
+  <!-- INPUT CSVs -->
+  <rect class="box-teal" x="62" y="62" width="168" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-teal" x="146" y="85" text-anchor="middle">dataset_one.csv</text>
+  <text class="ts sub-teal" x="146" y="103" text-anchor="middle">1 000 rows · employees</text>
+
+  <rect class="box-teal" x="256" y="62" width="168" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-teal" x="340" y="85" text-anchor="middle">dataset_two.csv</text>
+  <text class="ts sub-teal" x="340" y="103" text-anchor="middle">1 000 rows · personal info</text>
+
+  <rect class="box-teal" x="450" y="62" width="168" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-teal" x="534" y="85" text-anchor="middle">dataset_three.csv</text>
+  <text class="ts sub-teal" x="534" y="103" text-anchor="middle">10 000 rows · transactions</text>
+
+  <!-- CSV → read_csv arrows -->
+  <line class="arr" x1="146" y1="118" x2="146" y2="167" marker-end="url(#arrow)"/>
+  <line class="arr" x1="340" y1="118" x2="340" y2="167" marker-end="url(#arrow)"/>
+  <line class="arr" x1="534" y1="118" x2="534" y2="167" marker-end="url(#arrow)"/>
+
+  <!-- read_csv -->
+  <rect class="box-gray" x="158" y="168" width="224" height="40" rx="8" stroke-width="0.5"/>
+  <text class="th text-gray" x="270" y="193" text-anchor="middle">io_utils · read_csv()</text>
+  <line class="dashed" x1="146" y1="168" x2="160" y2="188"/>
+  <line class="dashed" x1="534" y1="168" x2="380" y2="188"/>
+
+  <!-- DQ arrow -->
+  <line class="arr" x1="270" y1="208" x2="270" y2="231" marker-end="url(#arrow)"/>
+
+  <!-- Basic checks -->
+  <rect class="box-amber" x="62" y="232" width="178" height="68" rx="8" stroke-width="0.5"/>
+  <text class="th text-amber" x="151" y="254" text-anchor="middle">Basic checks</text>
+  <text class="ts sub-amber" x="151" y="272" text-anchor="middle">Null IDs · unique IDs</text>
+  <text class="ts sub-amber" x="151" y="288" text-anchor="middle">row counts · non-negative</text>
+
+  <!-- Intermediate checks -->
+  <rect class="box-amber" x="262" y="232" width="196" height="68" rx="8" stroke-width="0.5"/>
+  <text class="th text-amber" x="360" y="254" text-anchor="middle">Intermediate checks</text>
+  <text class="ts sub-amber" x="360" y="272" text-anchor="middle">Ref integrity · calls ≤ made</text>
+  <text class="ts sub-amber" x="360" y="288" text-anchor="middle">Address format</text>
+
+  <!-- Warn/halt -->
+  <rect class="box-gray" x="478" y="244" width="154" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th text-gray" x="555" y="262" text-anchor="middle">Warn / halt</text>
+  <text class="ts sub-gray" x="555" y="278" text-anchor="middle">DataQualityError</text>
+
+  <line class="divider" x1="240" y1="266" x2="262" y2="266"/>
+  <line class="arr" x1="458" y1="266" x2="477" y2="266" marker-end="url(#arrow)"/>
+  <line class="arr" x1="360" y1="300" x2="360" y2="339" marker-end="url(#arrow)"/>
+
+  <!-- SparkSession -->
+  <rect class="box-purple" x="62" y="328" width="156" height="36" rx="8" stroke-width="0.5"/>
+  <text class="th text-purple" x="140" y="351" text-anchor="middle">SparkSession</text>
+  <text class="ts sub-purple" x="140" y="374" text-anchor="middle">local[*]</text>
+
+  <!-- Transform row A -->
+  <rect class="box-purple" x="246" y="328" width="130" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-purple" x="311" y="349" text-anchor="middle">IT data</text>
+  <text class="ts sub-purple" x="311" y="367" text-anchor="middle">ds1 ⋈ ds2 · IT · top 100</text>
+
+  <rect class="box-purple" x="390" y="328" width="130" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-purple" x="455" y="349" text-anchor="middle">Marketing addr.</text>
+  <text class="ts sub-purple" x="455" y="367" text-anchor="middle">ds1 ⋈ ds2 · zip parse</text>
+
+  <rect class="box-purple" x="534" y="328" width="102" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-purple" x="585" y="349" text-anchor="middle">Dept. breakdown</text>
+  <text class="ts sub-purple" x="585" y="367" text-anchor="middle">agg by area</text>
+
+  <!-- Transform row B -->
+  <rect class="box-purple" x="246" y="400" width="130" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-purple" x="311" y="421" text-anchor="middle">Top 3 performers</text>
+  <text class="ts sub-purple" x="311" y="439" text-anchor="middle">window rank > 75%</text>
+
+  <rect class="box-purple" x="390" y="400" width="130" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-purple" x="455" y="421" text-anchor="middle">Top 3 products NL</text>
+  <text class="ts sub-purple" x="455" y="439" text-anchor="middle">ds1 ⋈ ds3 · NL only</text>
+
+  <rect class="box-purple" x="534" y="400" width="102" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-purple" x="585" y="421" text-anchor="middle">Best salesperson</text>
+  <text class="ts sub-purple" x="585" y="439" text-anchor="middle">ds2 ⋈ ds3 · country</text>
+
+  <!-- SparkSession side connector -->
+  <line class="dashed" x1="218" y1="346" x2="246" y2="346"/>
+  <line class="dashed" x1="218" y1="346" x2="218" y2="428"/>
+  <line class="dashed" x1="218" y1="428" x2="246" y2="428"/>
+
+  <!-- Transform → write arrows -->
+  <line class="arr" x1="311" y1="456" x2="311" y2="554" marker-end="url(#arrow)"/>
+  <line class="arr" x1="385" y1="380" x2="200" y2="554" marker-end="url(#arrow)"/>
+  <line class="arr" x1="440" y1="384" x2="370" y2="554" marker-end="url(#arrow)"/>
+  <line class="arr" x1="455" y1="456" x2="497" y2="554" marker-end="url(#arrow)"/>
+  <line class="arr" x1="565" y1="384" x2="580" y2="554" marker-end="url(#arrow)"/>
+
+  <!-- write_single_csv -->
+  <rect class="box-gray" x="158" y="555" width="230" height="36" rx="8" stroke-width="0.5"/>
+  <text class="th text-gray" x="273" y="578" text-anchor="middle">io_utils · write_single_csv()</text>
+  <text class="ts sub-gray" x="273" y="601" text-anchor="middle">coalesce(1) · overwrite · header=true</text>
+
+  <!-- Output row A -->
+  <rect class="box-teal" x="62" y="616" width="156" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-teal" x="140" y="637" text-anchor="middle">it_data.csv</text>
+  <text class="ts sub-teal" x="140" y="655" text-anchor="middle">top 100 IT staff</text>
+
+  <rect class="box-teal" x="234" y="616" width="156" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-teal" x="312" y="637" text-anchor="middle">marketing_address_info</text>
+  <text class="ts sub-teal" x="312" y="655" text-anchor="middle">street + zip</text>
+
+  <rect class="box-teal" x="406" y="616" width="156" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-teal" x="484" y="637" text-anchor="middle">department_breakdown</text>
+  <text class="ts sub-teal" x="484" y="655" text-anchor="middle">sales + call rate</text>
+
+  <!-- Output row B -->
+  <rect class="box-teal" x="62" y="688" width="156" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-teal" x="140" y="709" text-anchor="middle">top_3.csv</text>
+  <text class="ts sub-teal" x="140" y="727" text-anchor="middle">top performers / dept</text>
+
+  <rect class="box-teal" x="234" y="688" width="156" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-teal" x="312" y="709" text-anchor="middle">top_3_products_nl</text>
+  <text class="ts sub-teal" x="312" y="727" text-anchor="middle">NL qty by dept</text>
+
+  <rect class="box-teal" x="406" y="688" width="156" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-teal" x="484" y="709" text-anchor="middle">best_salesperson.csv</text>
+  <text class="ts sub-teal" x="484" y="727" text-anchor="middle">top qty per country</text>
+
+  <!-- Infra row -->
+  <rect class="box-gray" x="62" y="776" width="134" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-gray" x="129" y="797" text-anchor="middle">logger.py</text>
+  <text class="ts sub-gray" x="129" y="815" text-anchor="middle">console + rotating file</text>
+
+  <rect class="box-gray" x="210" y="776" width="134" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-gray" x="277" y="797" text-anchor="middle">pytest + chispa</text>
+  <text class="ts sub-gray" x="277" y="815" text-anchor="middle">28 unit tests</text>
+
+  <rect class="box-gray" x="358" y="776" width="134" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-gray" x="425" y="797" text-anchor="middle">CI / GitHub Actions</text>
+  <text class="ts sub-gray" x="425" y="815" text-anchor="middle">lint · type · test</text>
+
+  <rect class="box-gray" x="506" y="776" width="134" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th text-gray" x="573" y="797" text-anchor="middle">pre-commit hooks</text>
+  <text class="ts sub-gray" x="573" y="815" text-anchor="middle">black · isort · flake8</text>
+
+  <!-- main.py badge -->
+  <rect class="box-coral" x="466" y="22" width="170" height="36" rx="8" stroke-width="0.5"/>
+  <text class="th text-coral" x="551" y="45" text-anchor="middle">main.py · CLI entry point</text>
+  <text class="ts sub-coral" x="551" y="67" text-anchor="middle">--ds1 --ds2 --ds3 --output</text>
+  <line class="dashed" x1="466" y1="40" x2="380" y2="188"/>
+
+  <!-- Log annotation -->
+  <rect class="log-border" x="62" y="856" width="558" height="36" rx="6"/>
+  <text class="ts sub-gray" x="341" y="879" text-anchor="middle">logs/sales_data.log — rotating file (5 MB × 3 backups) written by all layers</text>
+</svg>
