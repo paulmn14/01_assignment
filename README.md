@@ -57,7 +57,7 @@ A PySpark data engineering pipeline that ingests three CSV datasets from a telem
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
----
+---  
 
 ## Data Model
 
