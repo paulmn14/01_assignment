@@ -136,7 +136,8 @@ def build_department_breakdown(df1: DataFrame, df2: DataFrame) -> DataFrame:
 
 def build_top_3_performers(df1: DataFrame, df2: DataFrame) -> DataFrame:
     """
-    Return the top-3 performers per department with success rate (calls_successful / calls_made) > 75 %.
+    Return the top-3 performers per department with success rate > 75 %.
+    Success rate is defined as calls_successful / calls_made.
 
     """
 
