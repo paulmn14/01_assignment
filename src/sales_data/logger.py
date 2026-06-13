@@ -5,7 +5,7 @@ Logging setup for the sales-data pipeline.
     the console and to log files. The log files are automatically rotated
     when they reach a certain size, preventing the logs from growing too
     large while still keeping logs from previous pipeline runs.
-    
+
 """
 
 import logging

@@ -8,7 +8,6 @@ Data Quality checks for the sales-data pipeline.
     failure.
 """
 
-import re
 from typing import List
 
 from pyspark.sql import DataFrame

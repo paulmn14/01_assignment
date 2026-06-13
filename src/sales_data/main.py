@@ -8,7 +8,6 @@ Entry point for the sales-data pipeline.
 """
 
 import argparse
-import sys
 
 from sales_data.data_quality import run_basic_checks, run_intermediate_checks
 from sales_data.io_utils import read_csv, write_single_csv
