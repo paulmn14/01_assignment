@@ -16,13 +16,13 @@ from pyspark.sql.types import (
 )
 
 from sales_data.data_quality import (
-    DataQualityError,
     check_address_format,
     check_calls_successful_le_calls_made,
     check_non_negative_numerics,
     check_non_null_unique_ids,
     check_referential_integrity,
     check_row_count,
+    DataQualityError,
 )
 
 
