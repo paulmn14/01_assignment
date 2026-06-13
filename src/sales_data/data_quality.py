@@ -154,9 +154,9 @@ def check_referential_integrity(
     :type halt_on_failure: bool
     """
     valid_ids = df_one.select(F.col("id").alias("caller_id"))
-    orphan_count: int = (
-        df_three.join(valid_ids, on="caller_id", how="left_anti").count()
-    )
+    orphan_count: int = df_three.join(
+        valid_ids, on="caller_id", how="left_anti"
+    ).count()
     _check_or_warn(
         orphan_count == 0,
         f"[dataset_three] {orphan_count} caller_id value(s) have no matching id in dataset_one.",
@@ -185,9 +185,7 @@ def check_calls_successful_le_calls_made(
     )
 
 
-def check_address_format(
-    df: DataFrame, halt_on_failure: bool = False
-) -> None:
+def check_address_format(df: DataFrame, halt_on_failure: bool = False) -> None:
     """
     Verify that the ``address`` column matches the expected format:
     ``[street name], [house number], [zip code]``
@@ -203,9 +201,7 @@ def check_address_format(
     """
     # Pattern: <street name (alphanum+spaces)>, <house number>, <4digits SPACE 2CAPS>
     address_pattern = r"^[A-Za-z0-9 ]+,\s*\d+,\s*\d{4}\s[A-Z]{2}"
-    invalid_count: int = (
-        df.filter(~F.col("address").rlike(address_pattern)).count()
-    )
+    invalid_count: int = df.filter(~F.col("address").rlike(address_pattern)).count()
     _check_or_warn(
         invalid_count == 0,
         f"[dataset_two] {invalid_count} address(es) do not match the expected format.",

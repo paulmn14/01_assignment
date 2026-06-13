@@ -15,7 +15,7 @@ import os
 
 def get_logger(name: str = "sales_data", log_dir: str = "logs") -> logging.Logger:
 
-    #Return a configured :class:`logging.Logger` instance.
+    # Return a configured :class:`logging.Logger` instance.
 
     logger = logging.getLogger(name)
 

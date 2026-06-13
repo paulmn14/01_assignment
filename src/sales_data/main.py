@@ -27,7 +27,7 @@ logger = get_logger(__name__)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-   
+
     # Parse command-line arguments.
 
     parser = argparse.ArgumentParser(
@@ -79,9 +79,7 @@ def main(argv: list[str] | None = None) -> None:
 
     args = parse_args(argv)
     logger.info("Pipeline started.")
-    logger.info(
-        "Inputs  – ds1: %s | ds2: %s | ds3: %s", args.ds1, args.ds2, args.ds3
-    )
+    logger.info("Inputs  – ds1: %s | ds2: %s | ds3: %s", args.ds1, args.ds2, args.ds3)
     logger.info(
         "Options – output: %s | halt_on_failure: %s | skip_intermediate: %s",
         args.output,
@@ -112,11 +110,20 @@ def main(argv: list[str] | None = None) -> None:
     out = args.output
 
     write_single_csv(build_it_data(df1, df2), f"{out}/it_data")
-    write_single_csv(build_marketing_address_info(df1, df2), f"{out}/marketing_address_info")
-    write_single_csv(build_department_breakdown(df1, df2), f"{out}/department_breakdown")
+    write_single_csv(
+        build_marketing_address_info(df1, df2), f"{out}/marketing_address_info"
+    )
+    write_single_csv(
+        build_department_breakdown(df1, df2), f"{out}/department_breakdown"
+    )
     write_single_csv(build_top_3_performers(df1, df2), f"{out}/top_3")
-    write_single_csv(build_top_3_products_netherlands(df1, df3), f"{out}/top_3_most_sold_per_department_netherlands")
-    write_single_csv(build_best_salesperson_per_country(df2, df3), f"{out}/best_salesperson")
+    write_single_csv(
+        build_top_3_products_netherlands(df1, df3),
+        f"{out}/top_3_most_sold_per_department_netherlands",
+    )
+    write_single_csv(
+        build_best_salesperson_per_country(df2, df3), f"{out}/best_salesperson"
+    )
 
     logger.info("Pipeline complete.  All outputs written to: %s", out)
     spark.stop()

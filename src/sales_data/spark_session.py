@@ -9,7 +9,9 @@ SparkSession factory for the sales-data pipeline.
 from pyspark.sql import SparkSession
 
 
-def get_spark_session(app_name: str = "SalesData", master: str = "local[*]") -> SparkSession:
+def get_spark_session(
+    app_name: str = "SalesData", master: str = "local[*]"
+) -> SparkSession:
 
     # Build and return a SparkSession`.
 

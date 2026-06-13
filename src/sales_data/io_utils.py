@@ -18,19 +18,15 @@ logger = get_logger(__name__)
 
 
 def read_csv(spark: SparkSession, path: str) -> DataFrame:
-  
+
     # Read a CSV file into a PySpark DataFrame with header and schema inference.
-    
+
     logger.info("Reading CSV from: %s", path)
-    return (
-        spark.read.option("header", "true")
-        .option("inferSchema", "true")
-        .csv(path)
-    )
+    return spark.read.option("header", "true").option("inferSchema", "true").csv(path)
 
 
 def write_single_csv(df: DataFrame, output_dir: str) -> None:
-  
+
     # Write *df* to a single, cleanly named CSV file inside *output_dir*.
 
     logger.info("Writing CSV to: %s", output_dir)
@@ -38,12 +34,7 @@ def write_single_csv(df: DataFrame, output_dir: str) -> None:
     tmp_dir = os.path.join(output_dir, "_spark_tmp")
 
     # Write to a temporary sub-directory first.
-    (
-        df.coalesce(1)
-        .write.mode("overwrite")
-        .option("header", "true")
-        .csv(tmp_dir)
-    )
+    (df.coalesce(1).write.mode("overwrite").option("header", "true").csv(tmp_dir))
 
     # Locate the single part file Spark produced.
     part_files = glob.glob(os.path.join(tmp_dir, "part-*.csv"))

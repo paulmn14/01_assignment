@@ -6,8 +6,14 @@ A PySpark data engineering pipeline that ingests three CSV datasets from a telem
 
 ## Architecture
 
-![Pipeline Architecture](architecture.svg)
-![Pipeline Architecture](check.svg)
+![Pipeline Architecture](images/architecture.svg)
+
+## Pipeline Flow Diagram
+
+![Pipeline Flow Diagram](images/pipeline_flow_diagram.svg)
+<img src="images/pipeline_flow_diagram.svg" alt="Pipeline Flow Diagram" width="600">
+
+
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -61,6 +67,9 @@ A PySpark data engineering pipeline that ingests three CSV datasets from a telem
 
 ## Data Model
 
+
+![Data Model](images/datamodel.svg)
+
 ### Input Datasets
 
 ```
@@ -102,8 +111,8 @@ dataset_three.csv (10 000 rows)
 ### Relationships
 
 ```
-dataset_one ──(id = id)──── dataset_two      [1-to-1]
-dataset_one ──(id = caller_id)── dataset_three  [1-to-many]
+dataset_one ─ (id = id) ─ dataset_two      [1-to-1]
+dataset_one ─ (id = caller_id) ─ dataset_three  [1-to-many]
 ```
 
 ### Output Schemas
@@ -122,7 +131,7 @@ dataset_one ──(id = caller_id)── dataset_three  [1-to-many]
 ## Project Structure
 
 ```
-sales_data_project/
+O1_ASSIGNMENT/
 ├── data/                          ← input CSVs (not committed to git)
 │   ├── dataset_one.csv
 │   ├── dataset_two.csv

@@ -37,27 +37,20 @@ def _extract_zip_code(df: DataFrame) -> DataFrame:
     # Regex: 4 digits, a space, 2 uppercase letters – standard Dutch postcode.
     zip_pattern = r"(\d{4}\s[A-Z]{2})"
 
-    return (
-        df.withColumn(
-            "zip_code",
-            F.regexp_extract(F.col("address"), zip_pattern, 1)
-        )
-        .withColumn(
-            "street_address",
-            F.trim(
+    return df.withColumn(
+        "zip_code", F.regexp_extract(F.col("address"), zip_pattern, 1)
+    ).withColumn(
+        "street_address",
+        F.trim(
+            F.regexp_replace(
                 F.regexp_replace(
-                    F.regexp_replace(
-                        F.regexp_replace(F.col("address"), zip_pattern, ""),
-                        r",\s*,",
-                        ","
-                    ),
-                    r"(^,\s*|\s*,$)",
-                    ""
-                )
+                    F.regexp_replace(F.col("address"), zip_pattern, ""), r",\s*,", ","
+                ),
+                r"(^,\s*|\s*,$)",
+                "",
             )
-        )
+        ),
     )
-
 
 
 # ---------------------------------------------------------------------------
