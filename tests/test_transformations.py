@@ -28,7 +28,6 @@ from sales_data.transformations import (
     build_top_3_products_netherlands,
 )
 
-
 # ---------------------------------------------------------------------------
 # Input schemas
 # ---------------------------------------------------------------------------
@@ -69,14 +68,15 @@ DS3_SCHEMA = StructType(
 # Input fixture helpers
 # ---------------------------------------------------------------------------
 
+
 def _ds1(spark: SparkSession):
     return spark.createDataFrame(
         [
-            (1, "IT",        100, 80),   # success rate 80% → qualifies
-            (2, "IT",         50, 45),   # success rate 90% → qualifies
-            (3, "Marketing",  60, 30),   # success rate 50% → below 75%
-            (4, "Games",      40, 35),   # success rate 87.5% → qualifies
-            (5, "IT",         70, 55),   # success rate 78.6% → qualifies
+            (1, "IT", 100, 80),  # success rate 80% → qualifies
+            (2, "IT", 50, 45),  # success rate 90% → qualifies
+            (3, "Marketing", 60, 30),  # success rate 50% → below 75%
+            (4, "Games", 40, 35),  # success rate 87.5% → qualifies
+            (5, "IT", 70, 55),  # success rate 78.6% → qualifies
         ],
         DS1_SCHEMA,
     )
@@ -86,10 +86,10 @@ def _ds2(spark: SparkSession):
     return spark.createDataFrame(
         [
             (1, "Alice", "Lindehof, 5, 4133 HB", 90000.0),
-            (2, "Bob",   "Kerkstraat, 10, 1234 AB", 60000.0),
+            (2, "Bob", "Kerkstraat, 10, 1234 AB", 60000.0),
             (3, "Carol", "Marktplein, 3, 5678 CD", 45000.0),
-            (4, "Dave",  "Schoollaan, 7, 9012 EF", 30000.0),
-            (5, "Eve",   "Dorpsweg, 2, 3456 GH", 75000.0),
+            (4, "Dave", "Schoollaan, 7, 9012 EF", 30000.0),
+            (5, "Eve", "Dorpsweg, 2, 3456 GH", 75000.0),
         ],
         DS2_SCHEMA,
     )
@@ -98,12 +98,12 @@ def _ds2(spark: SparkSession):
 def _ds3(spark: SparkSession):
     return spark.createDataFrame(
         [
-            (1, 1, "Corp A", "Piet",  30, "Netherlands", "Laptop",  10),
-            (2, 2, "Corp B", "Jan",   25, "Netherlands", "Scanner",  5),
-            (3, 3, "Corp C", "Klaas", 40, "Belgium",     "Laptop",   8),
-            (4, 4, "Corp D", "Henk",  35, "Netherlands", "Desktop", 12),
-            (5, 1, "Corp E", "Lien",  28, "Netherlands", "Laptop",  20),
-            (6, 2, "Corp F", "Marc",  50, "Germany",     "Sign",     3),
+            (1, 1, "Corp A", "Piet", 30, "Netherlands", "Laptop", 10),
+            (2, 2, "Corp B", "Jan", 25, "Netherlands", "Scanner", 5),
+            (3, 3, "Corp C", "Klaas", 40, "Belgium", "Laptop", 8),
+            (4, 4, "Corp D", "Henk", 35, "Netherlands", "Desktop", 12),
+            (5, 1, "Corp E", "Lien", 28, "Netherlands", "Laptop", 20),
+            (6, 2, "Corp F", "Marc", 50, "Germany", "Sign", 3),
         ],
         DS3_SCHEMA,
     )
@@ -113,6 +113,7 @@ def _ds3(spark: SparkSession):
 # Output #1 – IT data
 # chispa: compare exact rows (IT employees sorted by sales_amount desc)
 # ---------------------------------------------------------------------------
+
 
 def test_build_it_data_exact_content(spark: SparkSession) -> None:
     """
@@ -135,9 +136,9 @@ def test_build_it_data_exact_content(spark: SparkSession) -> None:
     )
     expected = spark.createDataFrame(
         [
-            (1, "IT", 100, 80, "Alice", "Lindehof, 5, 4133 HB",   90000.0),
-            (5, "IT",  70, 55, "Eve",   "Dorpsweg, 2, 3456 GH",   75000.0),
-            (2, "IT",  50, 45, "Bob",   "Kerkstraat, 10, 1234 AB", 60000.0),
+            (1, "IT", 100, 80, "Alice", "Lindehof, 5, 4133 HB", 90000.0),
+            (5, "IT", 70, 55, "Eve", "Dorpsweg, 2, 3456 GH", 75000.0),
+            (2, "IT", 50, 45, "Bob", "Kerkstraat, 10, 1234 AB", 60000.0),
         ],
         expected_schema,
     )
@@ -155,6 +156,7 @@ def test_build_it_data_max_100_rows(spark: SparkSession) -> None:
 # Output #2 – Marketing address info
 # chispa: compare exact rows (street_address + zip_code)
 # ---------------------------------------------------------------------------
+
 
 def test_build_marketing_address_info_exact_content(spark: SparkSession) -> None:
     """
@@ -175,9 +177,7 @@ def test_build_marketing_address_info_exact_content(spark: SparkSession) -> None
     )
 
     # ignore_row_order because groupBy inside _extract_zip_code may reorder
-    assert_df_equality(
-        result, expected, ignore_nullable=True, ignore_row_order=True
-    )
+    assert_df_equality(result, expected, ignore_nullable=True, ignore_row_order=True)
 
 
 def test_build_marketing_address_info_columns(spark: SparkSession) -> None:
@@ -190,6 +190,7 @@ def test_build_marketing_address_info_columns(spark: SparkSession) -> None:
 # Output #3 – Department breakdown
 # chispa: compare exact aggregated rows
 # ---------------------------------------------------------------------------
+
 
 def test_build_department_breakdown_exact_content(spark: SparkSession) -> None:
     """
@@ -212,22 +213,21 @@ def test_build_department_breakdown_exact_content(spark: SparkSession) -> None:
     )
     expected = spark.createDataFrame(
         [
-            ("Games",     30000.0,  "87.50%"),
-            ("IT",       225000.0,  "81.82%"),
-            ("Marketing", 45000.0,  "50.00%"),
+            ("Games", 30000.0, "87.50%"),
+            ("IT", 225000.0, "81.82%"),
+            ("Marketing", 45000.0, "50.00%"),
         ],
         expected_schema,
     )
 
-    assert_df_equality(
-        result, expected, ignore_nullable=True, ignore_row_order=True
-    )
+    assert_df_equality(result, expected, ignore_nullable=True, ignore_row_order=True)
 
 
 # ---------------------------------------------------------------------------
 # Output #4 – Top 3 performers per department
 # chispa: compare exact rows for deterministic fixture data
 # ---------------------------------------------------------------------------
+
 
 def test_build_top_3_performers_exact_content(spark: SparkSession) -> None:
     """
@@ -251,17 +251,15 @@ def test_build_top_3_performers_exact_content(spark: SparkSession) -> None:
     )
     expected = spark.createDataFrame(
         [
-            ("Games", "Dave",  "87.50%", 30000.0, 1),
-            ("IT",    "Bob",   "90.00%", 60000.0, 1),
-            ("IT",    "Alice", "80.00%", 90000.0, 2),
-            ("IT",    "Eve",   "78.57%", 75000.0, 3),
+            ("Games", "Dave", "87.50%", 30000.0, 1),
+            ("IT", "Bob", "90.00%", 60000.0, 1),
+            ("IT", "Alice", "80.00%", 90000.0, 2),
+            ("IT", "Eve", "78.57%", 75000.0, 3),
         ],
         expected_schema,
     )
 
-    assert_df_equality(
-        result, expected, ignore_nullable=True, ignore_row_order=True
-    )
+    assert_df_equality(result, expected, ignore_nullable=True, ignore_row_order=True)
 
 
 def test_build_top_3_performers_max_3_per_dept(spark: SparkSession) -> None:
@@ -275,6 +273,7 @@ def test_build_top_3_performers_max_3_per_dept(spark: SparkSession) -> None:
 # Output #5 – Top 3 products per department (Netherlands only)
 # chispa: compare exact aggregated rows
 # ---------------------------------------------------------------------------
+
 
 def test_build_top_3_products_netherlands_exact_content(spark: SparkSession) -> None:
     """
@@ -304,15 +303,13 @@ def test_build_top_3_products_netherlands_exact_content(spark: SparkSession) -> 
     expected = spark.createDataFrame(
         [
             ("Games", "Desktop", 12, 1),
-            ("IT",    "Laptop",  30, 1),
-            ("IT",    "Scanner",  5, 2),
+            ("IT", "Laptop", 30, 1),
+            ("IT", "Scanner", 5, 2),
         ],
         expected_schema,
     )
 
-    assert_df_equality(
-        result, expected, ignore_nullable=True, ignore_row_order=True
-    )
+    assert_df_equality(result, expected, ignore_nullable=True, ignore_row_order=True)
 
 
 def test_build_top_3_products_max_3_per_dept(spark: SparkSession) -> None:
@@ -326,6 +323,7 @@ def test_build_top_3_products_max_3_per_dept(spark: SparkSession) -> None:
 # Output #6 – Best salesperson per country
 # chispa: compare exact rows
 # ---------------------------------------------------------------------------
+
 
 def test_build_best_salesperson_per_country_exact_content(
     spark: SparkSession,
@@ -352,16 +350,14 @@ def test_build_best_salesperson_per_country_exact_content(
     )
     expected = spark.createDataFrame(
         [
-            ("Belgium",     "Carol", 8),
-            ("Germany",     "Bob",   3),
+            ("Belgium", "Carol", 8),
+            ("Germany", "Bob", 3),
             ("Netherlands", "Alice", 30),
         ],
         expected_schema,
     )
 
-    assert_df_equality(
-        result, expected, ignore_nullable=True, ignore_row_order=True
-    )
+    assert_df_equality(result, expected, ignore_nullable=True, ignore_row_order=True)
 
 
 def test_build_best_salesperson_one_per_country(spark: SparkSession) -> None:
