@@ -6,127 +6,32 @@ A PySpark data engineering pipeline that ingests three CSV datasets from a telem
 
 ## Architecture
 
-![Pipeline Architecture](images/architecture.svg)
+![High Level Architecture](diagrams/high_level_architecture.svg)
+![Architecture](diagrams/architecture.svg)
 
 ## Pipeline Flow Diagram
 
-![Pipeline Flow Diagram](images/pipeline_flow_diagram.svg)
-<img src="images/pipeline_flow_diagram.svg" alt="Pipeline Flow Diagram" width="600">
-
-
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        LOCAL / VS CODE                              │
-│                                                                     │
-│  ┌────────────┐  ┌────────────┐  ┌─────────────┐                  │
-│  │dataset_one │  │dataset_two │  │dataset_three│  ← CSV Inputs    │
-│  │  .csv      │  │  .csv      │  │  .csv       │                  │
-│  └─────┬──────┘  └─────┬──────┘  └──────┬──────┘                  │
-│        │               │                │                          │
-│        └───────────────┼────────────────┘                          │
-│                        ▼                                            │
-│              ┌──────────────────┐                                   │
-│              │   io_utils.py    │  read_csv()                       │
-│              │  (SparkSession)  │                                   │
-│              └────────┬─────────┘                                   │
-│                       │                                             │
-│                       ▼                                             │
-│              ┌──────────────────┐                                   │
-│              │ data_quality.py  │                                   │
-│              │                  │                                   │
-│              │  Basic Checks:   │                                   │
-│              │  • non-null IDs  │                                   │
-│              │  • unique IDs    │                                   │
-│              │  • row counts    │                                   │
-│              │  • non-negative  │                                   │
-│              │                  │                                   │
-│              │  Intermediate:   │                                   │
-│              │  • ref integrity │                                   │
-│              │  • calls ≤ made  │                                   │
-│              │  • address fmt   │                                   │
-│              └────────┬─────────┘                                   │
-│                       │  warnings / DataQualityError                │
-│                       ▼                                             │
-│              ┌──────────────────┐                                   │
-│              │transformations.py│                                   │
-│              │                  │                                   │
-│              │ Output #1        │ → it_data/                        │
-│              │ Output #2        │ → marketing_address_info/         │
-│              │ Output #3        │ → department_breakdown/           │
-│              │ Output #4        │ → top_3/                          │
-│              │ Output #5        │ → top_3_most_sold_…_netherlands/  │
-│              │ Output #6        │ → best_salesperson/               │
-│              └──────────────────┘                                   │
-│                                                                     │
-│  logs/sales_data.log  ← rotating file log (5 MB × 3 backups)       │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
----  
+![Pipeline Flow Diagram](diagrams/pipeline_flow_diagram.svg)
 
 ## Data Model
 
 
-![Data Model](images/datamodel.svg)
+![Data Model](diagrams/datamodel.svg)
 
 ### Input Datasets
 
-```
-dataset_one.csv (1 000 rows)
-┌──────────────────────┬─────────────┐
-│ Column               │ Type        │
-├──────────────────────┼─────────────┤
-│ id (PK)              │ Integer     │
-│ area                 │ String      │  e.g. IT, Marketing, Games
-│ calls_made           │ Integer     │  ≥ 0
-│ calls_successful     │ Integer     │  ≥ 0, ≤ calls_made
-└──────────────────────┴─────────────┘
-
-dataset_two.csv (1 000 rows)
-┌──────────────────────┬─────────────┐
-│ Column               │ Type        │
-├──────────────────────┼─────────────┤
-│ id (PK, FK→ds1.id)   │ Integer     │
-│ name                 │ String      │
-│ address              │ String      │  "[street], [num], [4d 2C]"
-│ sales_amount         │ Double      │  ≥ 0
-└──────────────────────┴─────────────┘
-
-dataset_three.csv (10 000 rows)
-┌──────────────────────┬─────────────┐
-│ Column               │ Type        │
-├──────────────────────┼─────────────┤
-│ id (PK)              │ Integer     │
-│ caller_id (FK→ds1.id)│ Integer     │
-│ company              │ String      │
-│ recipient            │ String      │
-│ age                  │ Integer     │
-│ country              │ String      │
-│ product_sold         │ String      │
-│ quantity             │ Integer     │  ≥ 0
-└──────────────────────┴─────────────┘
-```
+![Data Model](diagrams/source_dataset.png)
 
 ### Relationships
 
 ```
-dataset_one ─ (id = id) ─ dataset_two      [1-to-1]
+dataset_one ─ (id = id) ─ dataset_two [1-to-1]
 dataset_one ─ (id = caller_id) ─ dataset_three  [1-to-many]
 ```
 
 ### Output Schemas
 
-| Output directory                           | Key columns                                                  |
-|--------------------------------------------|--------------------------------------------------------------|
-| `it_data/`                                 | All ds1+ds2 columns, filtered IT, top 100 by sales_amount ↓ |
-| `marketing_address_info/`                  | street_address, zip_code                                     |
-| `department_breakdown/`                    | area, total_sales_amount, call_success_rate                  |
-| `top_3/`                                   | area, name, success_rate_pct, sales_amount, rank             |
-| `top_3_most_sold_per_department_netherlands/` | area, product_sold, total_quantity, rank                  |
-| `best_salesperson/`                        | country, name, total_quantity                                |
-
----
+![Data Model](diagrams/output_schemas.png)
 
 ## Project Structure
 
@@ -165,7 +70,7 @@ O1_ASSIGNMENT/
 ## Prerequisites
 
 - Python 3.10
-- Java 11 or 17 
+- Java 11 or 17
 - Git
 
 ---
