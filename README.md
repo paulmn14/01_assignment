@@ -126,13 +126,13 @@ dataset_one ─ (id = caller_id) ─ dataset_three  [1-to-many]
 ### Bonus: Who should get the bonus? (Output #4 answer)
 
 The top-3 performers per department are filtered to those with `calls_successful / calls_made > 75%`.
-Among them, the employee with the **highest sales_amount** best combines efficiency (high success rate) with business impact (revenue generated). That person deserves the bonus most — success rate alone does not drive revenue, but the combination of both is the strongest signal of overall performance.
+Among them, the employee with the **highest sales_amount** best combines efficiency (high success rate) with business impact (revenue generated). That person deserves the bonus most - success rate alone does not drive revenue, but the combination of both success rate and revenue generated.
 
 ## Project Structure
 
 ```
 O1_ASSIGNMENT/
-├── data/                          ← input CSVs (not committed to git)
+├── data/                          ← input CSVs (git-ignored)
 │   ├── dataset_one.csv
 │   ├── dataset_two.csv
 │   └── dataset_three.csv

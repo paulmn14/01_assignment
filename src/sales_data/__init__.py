@@ -1,5 +1,5 @@
 """
-EternalTeleSales Fran van Seb Group - PySpark Data Pipeline.
+EternalTeleSales Fran van Seb Group
 
 :description: Processes three employee/sales datasets and produces
     six analytical outputs covering IT data, marketing addresse information,
