@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name="sales-data",
@@ -20,7 +20,6 @@ setup(
             "isort==5.13.2",
             "flake8==7.0.0",
             "pre-commit==3.6.0",
-            "pydantic==2.5.3",
         ]
     },
     entry_points={
