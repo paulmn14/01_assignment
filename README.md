@@ -1,1 +1,244 @@
-# 01_assignment
+# EternalTeleSales Fran van Seb Group
+
+A PySpark data engineering pipeline that ingests three CSV datasets from a telemarketing company, runs data quality checks, and produces six analytical outputs used by management and stakeholders.
+
+---
+
+## Requirements
+
+### Output #1 - **IT Data**
+
+The management teams wants some specific information about the people that are working in selling IT products.
+
+- Join the two datasets.
+- Filter the data on the **IT** department.
+- Order the data by the sales amount, biggest should come first.
+- Save only the first **100** records.
+- The output directory should be called **it_data** and you must use PySpark to save only to one **CSV** file.
+
+### Output #2 - **Marketing Address Information**
+
+The management team wants to send some presents to team members that are work only selling **Marketing** products and wants a list of only addresses and zip code, but the zip code needs to be in it's own column.
+
+- The output directory should be called **marketing_address_info** and you must use PySpark to save only to one **CSV** file.
+
+### Output #3 - **Department Breakdown**
+
+The stakeholders want to have a breakdown of the sales amount of each department and they also want to see the total percentage of calls_succesfful/calls_made per department. The amount of money and percentage should be easily readable.
+
+- The output directory should be called **department_breakdown** and you must use PySpark to save only to one **CSV** file.
+
+### Output #4 - **Top 3 best performers per department**
+
+The management team wants to reward it's best employees with a bonus and therefore it wants to know the name of the top 3 best performers per department. That is the ones that have a percentage of calls_succesfful/calls_made higher than 75%. It also wants to know the sales amount of these employees to see who best deserves the bonus. In your opinion, who should get it and why?
+
+- The output directory should be called **top_3** and you must use PySpark to save only to one **CSV** file.
+
+### Output #5 - **Top 3 most sold products per department in the Netherlands**
+
+- The output directory should be called **top_3_most_sold_per_department_netherlands** and you must use PySpark to save only to one **CSV** file.
+
+### Output #6 - **Who is the best overall salesperson per country**
+
+- The output directory should be called **best_salesperson** and you must use PySpark to save only to one **CSV** file.
+
+----
+## Solution
+
+## Architecture
+
+![High Level Architecture](diagrams/high_level_architecture.svg)
+
+---
+
+### Layer Descriptions
+
+#### 1. Source Systems (Ingestion)
+- Raw input data ingested from multiple source systems
+- Includes flat files (CSV), databases, and APIs
+- Data is ingested **as-is** without transformation
+
+---
+
+#### 2. Bronze Layer (Raw)
+- Stores **raw ingested data** exactly as received from source
+- No transformations applied
+- Acts as the **single source of truth**
+- Data is immutable — never modified after ingestion
+
+---
+
+#### 3. Silver Layer (Cleaned)
+- Applies **data quality checks** (Basic + Intermediate)
+- Joins datasets (dataset_one, dataset_two, dataset_three)
+
+---
+
+#### 4. Gold Layer (Enriched)
+- Contains **business-ready, fully transformed data**
+- All 6 transformation functions applied:
+  - IT department filter
+  - Sales amount breakdown
+  - Call success rate calculation
+  - Top 100 records by sales
+  - Department aggregations
+  - Output formatted for reporting
+- Optimised for consumption and reporting
+
+---
+
+#### 5. Consumption Layer
+- **Reports** — business dashboards and summaries
+- **Analytics** — further analysis and insights
+- Data served to end users and stakeholders
+
+---
+
+#### 6. Orchestration
+- Coordinates and manages the entire pipeline
+- Ensures correct execution order:
+
+
+## Pipeline Flow Diagram
+
+![Pipeline Flow Diagram](diagrams/pipeline_flow_diagram.svg)
+
+
+### Input Datasets
+
+![Input Dataset](diagrams/input_dataset.png)
+
+## Data Model
+
+![Data Model](diagrams/datamodel.svg)
+
+### Relationships
+
+```
+dataset_one ─ (id = id) ─ dataset_two [1-to-1]
+dataset_one ─ (id = caller_id) ─ dataset_three  [1-to-many]
+```
+
+### Output Schemas
+
+![Data Model](diagrams/output_schemas.png)
+
+### Bonus: Who should get the bonus? (Output #4 answer)
+
+The top-3 performers per department are filtered to those with `calls_successful / calls_made > 75%`.
+Among them, the employee with the **highest sales_amount** best combines efficiency (high success rate) with business impact (revenue generated). That person deserves the bonus most - success rate alone does not drive revenue, but the combination of both success rate and revenue generated.
+
+## Project Structure
+
+```
+O1_ASSIGNMENT/
+├── data/                          ← input CSVs (git-ignored)
+│   ├── dataset_one.csv
+│   ├── dataset_two.csv
+│   └── dataset_three.csv
+├── output/                        ← generated by pipeline (git-ignored)
+├── logs/                          ← rotating log files (git-ignored)
+├── src/
+│   └── sales_data/
+│       ├── __init__.py
+│       ├── logger.py              ← rotating file + console logger
+│       ├── spark_session.py       ← SparkSession factory
+│       ├── io_utils.py            ← read_csv / write_single_csv
+│       ├── data_quality.py        ← Basic + Intermediate DQ checks
+│       ├── transformations.py     ← all 6 transformation functions
+│       └── main.py                ← CLI entry point (sales-data)
+├── tests/
+│   ├── conftest.py                ← shared SparkSession fixture
+│   ├── test_data_quality.py
+│   └── test_transformations.py
+├── .github/
+│   └── workflows/ci.yml          ← GitHub Actions CI
+├── .pre-commit-config.yaml
+├── mypy.ini
+├── setup.cfg
+├── setup.py
+└── requirements.txt
+```
+
+---
+
+## Prerequisites
+
+- Python 3.10
+- Java  17
+
+---
+
+## Local Setup (VS Code)
+
+```bash
+# 1. Clone / open the project folder in VS Code
+
+# 2. Create a virtual environment
+python3.10 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+
+# 3. Install all dependencies
+pip install -r requirements.txt
+
+# 4. Install the package in editable mode (enables 'sales-data' entry point)
+pip install -e .
+
+# 5. (Optional) Install pre-commit hooks
+pre-commit install
+```
+
+> **Java note**: Set `JAVA_HOME` if PySpark cannot find Java:
+> ```bash
+> export JAVA_HOME=$(/usr/libexec/java_home -v 11)   # macOS
+> ```
+
+>**Hadoop note**: Set `HADOOP_HOME` if output files are not generated
+>https://github.com/cdarlint/winutils download hadoop-3.3.5/bin as winutils.exe file is required
+---
+
+## Running the Pipeline
+
+```bash
+# From the project root with venv activated:
+python -m sales_data.main \
+    --ds1 data/dataset_one.csv \
+    --ds2 data/dataset_two.csv \
+    --ds3 data/dataset_three.csv \
+    --output output
+
+```
+
+Outputs are written to output folder with specified output name `output/<output_name>/<output_name>.csv`.
+
+---
+
+## Running the Tests
+
+```bash
+pytest tests/ -v
+
+```
+
+---
+
+## Packaging
+
+```bash
+python setup.py sdist    # creates dist/sales-data-1.0.0.tar.gz
+```
+
+---
+
+## CI/CD
+
+GitHub Actions runs on every push/PR:
+1. isort check
+2. black check
+3. flake8
+4. mypy
+5. pytest
+
+See `.github/workflows/ci.yml`.
+
+---
