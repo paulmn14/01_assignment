@@ -2,8 +2,7 @@
 Pytest configuration and shared fixtures.
 
 :description: Provides a module-scoped SparkSession so that Spark is
-    initialised once per test session rather than once per test, keeping
-    the test suite fast.
+    initialised once per test session.
 """
 
 import pytest

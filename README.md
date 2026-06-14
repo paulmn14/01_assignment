@@ -7,20 +7,21 @@ A PySpark data engineering pipeline that ingests three CSV datasets from a telem
 ## Architecture
 
 ![High Level Architecture](diagrams/high_level_architecture.svg)
+
 ![Architecture](diagrams/architecture.svg)
 
 ## Pipeline Flow Diagram
 
 ![Pipeline Flow Diagram](diagrams/pipeline_flow_diagram.svg)
 
-## Data Model
-
-
-![Data Model](diagrams/datamodel.svg)
 
 ### Input Datasets
 
-![Data Model](diagrams/source_dataset.png)
+![Input Dataset](diagrams/input_dataset.png)
+
+## Data Model
+
+![Data Model](diagrams/datamodel.svg)
 
 ### Relationships
 
@@ -72,6 +73,7 @@ O1_ASSIGNMENT/
 - Python 3.10
 - Java 11 or 17
 - Git
+- Hadoop 3.3.5
 
 ---
 
@@ -99,6 +101,8 @@ pre-commit install
 > export JAVA_HOME=$(/usr/libexec/java_home -v 11)   # macOS
 > ```
 
+**Hadoop note**: Set `HADOOP_HOME` if output files are not generated
+https://github.com/cdarlint/winutils download hadoop-3.3.5/bin
 ---
 
 ## Running the Pipeline
@@ -125,7 +129,8 @@ sales-data ... --halt-on-failure
 sales-data ... --skip-intermediate
 ```
 
-Outputs are written to `output/<output_name>/part-00000-*.csv`.
+Outputs are written to output `output/<output_name>/part-00000-*.csv`.
+Outputs are written to output folder with specified output name `output/<output_name>/<output_name>.csv`.
 
 ---
 
@@ -170,8 +175,44 @@ GitHub Actions runs on every push/PR:
 See `.github/workflows/ci.yml`.
 
 ---
+## Requirement
 
+### Output #1 - **IT Data**
+
+The management teams wants some specific information about the people that are working in selling IT products.
+
+- Join the two datasets.
+- Filter the data on the **IT** department.
+- Order the data by the sales amount, biggest should come first.
+- Save only the first **100** records.
+- The output directory should be called **it_data** and you must use PySpark to save only to one **CSV** file.
+
+### Output #2 - **Marketing Address Information**
+
+The management team wants to send some presents to team members that are work only selling **Marketing** products and wants a list of only addresses and zip code, but the zip code needs to be in it's own column.
+
+- The output directory should be called **marketing_address_info** and you must use PySpark to save only to one **CSV** file.
+
+### Output #3 - **Department Breakdown**
+
+The stakeholders want to have a breakdown of the sales amount of each department and they also want to see the total percentage of calls_succesfful/calls_made per department. The amount of money and percentage should be easily readable.
+
+- The output directory should be called **department_breakdown** and you must use PySpark to save only to one **CSV** file.
+
+### Output #4 - **Top 3 best performers per department**
+
+The management team wants to reward it's best employees with a bonus and therefore it wants to know the name of the top 3 best performers per department. That is the ones that have a percentage of calls_succesfful/calls_made higher than 75%. It also wants to know the sales amount of these employees to see who best deserves the bonus. In your opinion, who should get it and why?
+
+- The output directory should be called **top_3** and you must use PySpark to save only to one **CSV** file.
 ## Bonus: Who should get the bonus? (Output #4 answer)
 
 The top-3 performers per department are filtered to those with `calls_successful / calls_made > 75%`.
 Among them, the employee with the **highest sales_amount** best combines efficiency (high success rate) with business impact (revenue generated). That person deserves the bonus most — success rate alone does not drive revenue, but the combination of both is the strongest signal of overall performance.
+
+### Output #5 - **Top 3 most sold products per department in the Netherlands**
+
+- The output directory should be called **top_3_most_sold_per_department_netherlands** and you must use PySpark to save only to one **CSV** file.
+
+### Output #6 - **Who is the best overall salesperson per country**
+
+- The output directory should be called **best_salesperson** and you must use PySpark to save only to one **CSV** file.

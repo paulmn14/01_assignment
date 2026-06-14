@@ -245,7 +245,9 @@ def run_basic_checks(
         df1, ["calls_made", "calls_successful"], "dataset_one", halt_on_failure
     )
     check_non_negative_numerics(df2, ["sales_amount"], "dataset_two", halt_on_failure)
-    check_non_negative_numerics(df3, ["quantity"], "dataset_three", halt_on_failure)
+    check_non_negative_numerics(
+        df3, ["age", "quantity"], "dataset_three", halt_on_failure
+    )
 
     logger.info("Basic data quality checks complete.")
 

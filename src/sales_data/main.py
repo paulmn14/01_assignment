@@ -26,9 +26,16 @@ logger = get_logger(__name__)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse command-line arguments.
 
-    # Parse command-line arguments.
-
+    :param argv: Argument list.  Defaults to ``sys.argv[1:]`` when
+        ``None``.
+    :type argv: list[str] | None
+    :return: Parsed namespace with attributes ``ds1``, ``ds2``, ``ds3``,
+        ``output``, ``halt_on_failure``, and ``skip_intermediate``.
+    :rtype: argparse.Namespace
+    """
     parser = argparse.ArgumentParser(
         prog="sales-data",
         description="EternalTeleSales Fran van Seb Group – PySpark Analytics Pipeline",
@@ -73,9 +80,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def main(argv: list[str] | None = None) -> None:
+    """
+    Orchestrate the full sales-data pipeline.
 
-    # Orchestrate the full sales-data pipeline.
-
+    :param argv: Optional argument list for programmatic invocation.
+    :type argv: list[str] | None
+    """
     args = parse_args(argv)
     logger.info("Pipeline started.")
     logger.info("Inputs  – ds1: %s | ds2: %s | ds3: %s", args.ds1, args.ds2, args.ds3)

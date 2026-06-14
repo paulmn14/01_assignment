@@ -23,6 +23,12 @@ def _join_ds1_ds2(df1: DataFrame, df2: DataFrame) -> DataFrame:
     """
     Inner-join dataset_one and dataset_two on their ``id`` columns.
 
+    :param df1: Employee expertise DataFrame (dataset_one).
+    :type df1: pyspark.sql.DataFrame
+    :param df2: Personal/sales information DataFrame (dataset_two).
+    :type df2: pyspark.sql.DataFrame
+    :return: Joined DataFrame with columns from both sources.
+    :rtype: pyspark.sql.DataFrame
     """
 
     return df1.join(df2, on="id", how="inner")
@@ -33,6 +39,10 @@ def _extract_zip_code(df: DataFrame) -> DataFrame:
     Parse the ``address`` column and split it into ``street_address``
     and ``zip_code`` columns.
 
+    :param df: DataFrame containing an ``address`` column.
+    :type df: pyspark.sql.DataFrame
+    :return: DataFrame with ``street_address`` and ``zip_code`` columns added.
+    :rtype: pyspark.sql.DataFrame
     """
     # Regex: 4 digits, a space, 2 uppercase letters – standard Dutch postcode.
     zip_pattern = r"(\d{4}\s[A-Z]{2})"
@@ -62,6 +72,12 @@ def build_it_data(df1: DataFrame, df2: DataFrame) -> DataFrame:
     """
     Return the top-100 IT-department employees ordered by sales amount desc.
 
+    :param df1: Employee expertise DataFrame.
+    :type df1: pyspark.sql.DataFrame
+    :param df2: Personal/sales information DataFrame.
+    :type df2: pyspark.sql.DataFrame
+    :return: Filtered, ordered, limited DataFrame.
+    :rtype: pyspark.sql.DataFrame
     """
     logger.info("Building Output #1 – IT Data …")
     joined = _join_ds1_ds2(df1, df2)
@@ -83,6 +99,12 @@ def build_marketing_address_info(df1: DataFrame, df2: DataFrame) -> DataFrame:
     """
     Return the address and zip code for Marketing-department employees.
 
+    :param df1: Employee expertise DataFrame.
+    :type df1: pyspark.sql.DataFrame
+    :param df2: Personal/sales information DataFrame.
+    :type df2: pyspark.sql.DataFrame
+    :return: DataFrame with ``street_address`` and ``zip_code`` columns.
+    :rtype: pyspark.sql.DataFrame
     """
     logger.info("Building Output #2 – Marketing Address Info …")
     joined = _join_ds1_ds2(df1, df2)
@@ -102,6 +124,13 @@ def build_department_breakdown(df1: DataFrame, df2: DataFrame) -> DataFrame:
     """
     Return total sales amount and call-success rate per department.
 
+    :param df1: Employee expertise DataFrame.
+    :type df1: pyspark.sql.DataFrame
+    :param df2: Personal/sales information DataFrame.
+    :type df2: pyspark.sql.DataFrame
+    :return: Aggregated DataFrame with columns ``area``,
+        ``total_sales_amount``, and ``call_success_rate``.
+    :rtype: pyspark.sql.DataFrame
     """
     logger.info("Building Output #3 – Department Breakdown …")
     joined = _join_ds1_ds2(df1, df2)
@@ -139,6 +168,13 @@ def build_top_3_performers(df1: DataFrame, df2: DataFrame) -> DataFrame:
     Return the top-3 performers per department with success rate > 75 %.
     Success rate is defined as calls_successful / calls_made.
 
+    :param df1: Employee expertise DataFrame.
+    :type df1: pyspark.sql.DataFrame
+    :param df2: Personal/sales information DataFrame.
+    :type df2: pyspark.sql.DataFrame
+    :return: DataFrame with columns ``area``, ``name``,
+        ``success_rate_pct``, ``sales_amount``, and ``rank``.
+    :rtype: pyspark.sql.DataFrame
     """
 
     logger.info("Building Output #4 – Top 3 Performers per Department …")
@@ -177,6 +213,13 @@ def build_top_3_products_netherlands(df1: DataFrame, df3: DataFrame) -> DataFram
     """
     Return the top-3 most-sold products per department for Netherlands sales.
 
+    :param df1: Employee expertise DataFrame (contains ``area``).
+    :type df1: pyspark.sql.DataFrame
+    :param df3: Sales transactions DataFrame (dataset_three).
+    :type df3: pyspark.sql.DataFrame
+    :return: DataFrame with columns ``area``, ``product_sold``,
+        ``total_quantity``, and ``rank``.
+    :rtype: pyspark.sql.DataFrame
     """
 
     logger.info("Building Output #5 – Top 3 Products per Dept (NL) …")
@@ -212,6 +255,14 @@ def build_best_salesperson_per_country(df2: DataFrame, df3: DataFrame) -> DataFr
 
     "Best" is defined as the employee who sold highest
     total ``quantity`` in that country.
+
+    :param df2: Personal/sales information DataFrame (dataset_two).
+    :type df2: pyspark.sql.DataFrame
+    :param df3: Sales transactions DataFrame (dataset_three).
+    :type df3: pyspark.sql.DataFrame
+    :return: DataFrame with columns ``country``, ``name``,
+        and ``total_quantity``.
+    :rtype: pyspark.sql.DataFrame
 
     """
     logger.info("Building Output #6 – Best Salesperson per Country …")

@@ -14,8 +14,19 @@ import os
 
 
 def get_logger(name: str = "sales_data", log_dir: str = "logs") -> logging.Logger:
+    """
+    Return a configured :class:`logging.Logger` instance.
 
-    # Return a configured :class:`logging.Logger` instance.
+    The logger writes to a rotating log file under *log_dir*
+    (DEBUG level, max 5 MB per file, 3 backups).
+
+    :param name: Name of the logger; typically the module ``__name__``.
+    :type name: str
+    :param log_dir: Directory where the rotating log file is written.
+    :type log_dir: str
+    :return: Configured logger instance.
+    :rtype: logging.Logger
+    """
 
     logger = logging.getLogger(name)
 

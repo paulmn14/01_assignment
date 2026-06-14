@@ -1,11 +1,10 @@
 """
 Tests for :mod:`sales_data.transformations`.
 
-:description: Uses *chispa* ``assert_df_equality`` to compare actual
-    DataFrame content row-by-row for deterministic outputs.  Plain
-    pytest assertions are used only where row order is non-deterministic
-    (window-ranked results with ties) or where a structural property
-    is being checked rather than exact content.
+:description: Ensures that all transformation functions return the
+    correct results for a known set of input data. DataFrame outputs are
+    validated using chispa, while standard pytest assertions are used
+    for row-count, column, and ranking-related checks.
 """
 
 from chispa.dataframe_comparer import assert_df_equality
@@ -198,7 +197,7 @@ def test_build_department_breakdown_exact_content(spark: SparkSession) -> None:
     call_success_rate string.  chispa checks every cell.
 
     Manual calculation from fixture:
-      IT        → sales 90000+60000+75000=225000  calls 100+50+70=220  succ 80+45+55=180  → 81.82%
+      IT        → sales 90000+60000+75000=225000  calls 100+50+70=220   succ 80+45+55=180  → 81.82%
       Marketing → sales 45000                     calls 60              succ 30            → 50.00%
       Games     → sales 30000                     calls 40              succ 35            → 87.50%
     """

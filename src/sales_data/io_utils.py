@@ -18,17 +18,36 @@ logger = get_logger(__name__)
 
 
 def read_csv(spark: SparkSession, path: str) -> DataFrame:
+    """
+    Read a CSV file into a PySpark DataFrame with header inference.
 
-    # Read a CSV file into a PySpark DataFrame with header and schema inference.
+    :param spark: Active SparkSession.
+    :type spark: pyspark.sql.SparkSession
+    :param path: Absolute or relative path to the CSV file.
+    :type path: str
+    :return: DataFrame loaded from the CSV.
+    :rtype: pyspark.sql.DataFrame
+    """
 
     logger.info("Reading CSV from: %s", path)
     return spark.read.option("header", "true").option("inferSchema", "true").csv(path)
 
 
 def write_single_csv(df: DataFrame, output_dir: str) -> None:
+    """
+    Write *df* to a single, cleanly named CSV file inside *output_dir*.
 
-    # Write *df* to a single, cleanly named CSV file inside *output_dir*.
+    PySpark writes to a temporary ``_spark_tmp`` subfolder using
+    ``coalesce(1)``, then the single ``part-00000-*.csv`` file is
+    renamed to ``<output_dir_name>.csv`` and placed directly inside
+    *output_dir*.  Spark metadata files (``_SUCCESS``, ``*.crc``) are
+    removed so the folder contains only the CSV.
 
+    :param df: DataFrame to write.
+    :type df: pyspark.sql.DataFrame
+    :param output_dir: Target directory path.  Created if absent.
+    :type output_dir: str
+    """
     logger.info("Writing CSV to: %s", output_dir)
 
     tmp_dir = os.path.join(output_dir, "_spark_tmp")
